@@ -19,4 +19,9 @@ public class TestController extends BaseController {
     public ResponseEntity<BaseResponse> doTest(HttpServletRequest httpServletRequest, BaseRequest<TestRequest> baseRequest) {
         return ResponseEntity.ok(testService.doTest(baseRequest));
     }
+
+    @GetMapping("test-get")
+    public ResponseEntity<String> doTestGet() {
+        return ResponseEntity.ok("Hello");
+    }
 }
