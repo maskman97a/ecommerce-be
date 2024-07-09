@@ -7,6 +7,7 @@ import lombok.Data;
 public class BaseResponse {
     int errorCode;
     String message;
+    Object additionalInfo;
 
     public BaseResponse() {
         this.errorCode = ErrorType.Success;
