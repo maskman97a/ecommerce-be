@@ -1,0 +1,56 @@
+package com.ecommerce.babystore.controller;
+
+import com.ecommerce.babystore.dto.request.SignupRequest;
+import com.ecommerce.babystore.entity.Account;
+import com.ecommerce.babystore.entity.ERole;
+import com.ecommerce.babystore.entity.User;
+import com.ecommerce.babystore.repository.AccountRepository;
+import com.ecommerce.babystore.repository.UserRepository;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashSet;
+import java.util.Set;
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/v1")
+public class AuthController {
+    private final PasswordEncoder encoder;
+    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
+
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+//        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+//            return ResponseEntity
+//                    .badRequest()
+//                    .body("Error: Username is already taken!");
+//        }
+//        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+//            return ResponseEntity
+//                    .badRequest()
+//                    .body("Error: Email is already in use!");
+//        }
+        // Create new user's account
+        User user = User.builder()
+                .fullName(signUpRequest.getFullName())
+                .eRole(ERole.USER)
+                .build();
+        userRepository.save(user);
+        Account account = Account.builder().email(signUpRequest.getEmail())
+                .password(encoder.encode(signUpRequest.getPassword()))
+                .isActived(false)
+                .user(user)
+                .build();
+        accountRepository.save(account);
+        return ResponseEntity.ok("User registered successfully!");
+    }
+}
