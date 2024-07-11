@@ -1,15 +1,19 @@
 package com.ecommerce.babystore.controller;
 
 import com.ecommerce.babystore.dto.request.SignupRequest;
+import com.ecommerce.babystore.dto.response.BaseResponse;
 import com.ecommerce.babystore.entity.Account;
 import com.ecommerce.babystore.entity.Role;
 import com.ecommerce.babystore.entity.User;
+import com.ecommerce.babystore.exception.BusinessException;
 import com.ecommerce.babystore.repository.AccountRepository;
 import com.ecommerce.babystore.repository.RoleRepository;
 import com.ecommerce.babystore.repository.UserRepository;
+import com.ecommerce.babystore.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,35 +32,22 @@ public class AuthController {
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
     private final RoleRepository roleRepository;
-
+    private final AccountService accountService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (accountRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Error: Username is already taken!");
+        try{
+            User user = User.builder()
+                    .firstName(signUpRequest.getFirstName())
+                    .lastName(signUpRequest.getLastName())
+                    .phoneNumber(signUpRequest.getPhoneNumber())
+                    .account(accountService.createAccount(signUpRequest))
+                    .build();
+            userRepository.save(user);
+            return ResponseEntity.ok("User registered successfully!");
+        } catch (BusinessException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponse(500,e.getMessage()));
         }
-        if (accountRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Error: Email is already in use!");
-        }
-//         Create new user's account
-        Role role = roleRepository.findByRoleName(signUpRequest.getRole()).orElse(null);
-        Account account = Account.builder().email(signUpRequest.getEmail())
-                .password(encoder.encode(signUpRequest.getPassword()))
-                .role(role)
-                .build();
-        accountRepository.save(account);
-        User user = User.builder()
-                .firstName(signUpRequest.getFirstName())
-                .lastName(signUpRequest.getLastName())
-                .phoneNumber(signUpRequest.getPhoneNumber())
-                .account(account)
-                .build();
-        userRepository.save(user);
 
-        return ResponseEntity.ok("User registered successfully!");
     }
 }

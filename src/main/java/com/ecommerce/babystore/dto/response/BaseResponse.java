@@ -13,4 +13,9 @@ public class BaseResponse {
         this.errorCode = ErrorType.Success;
         this.message = ErrorType.getMessage(errorCode);
     }
+
+    public BaseResponse(int number, String message) {
+        this.errorCode = number;
+        this.message = message;
+    }
 }
