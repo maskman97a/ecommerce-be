@@ -10,15 +10,27 @@ import java.util.Date;
 @Entity
 @Data
 @AllArgsConstructor
+@Table(name = "tbl_session")
 public class Session {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tbl_session_seq")
+    @SequenceGenerator(name = "tbl_session_seq", sequenceName = "tbl_session_seq", allocationSize = 1)
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "account_id")
     @JsonManagedReference
-    private User user;
+    private Account account;
 
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "login_time")
     private Date loginTime;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "logout_time")
+    private Date logoutTime;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date expired;
 }
