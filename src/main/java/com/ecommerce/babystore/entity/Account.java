@@ -30,7 +30,7 @@ public class Account {
     private String password;
 
     @Column(nullable = false)
-    private boolean status;
+    private Boolean status;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at")

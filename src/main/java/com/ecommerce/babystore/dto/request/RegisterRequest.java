@@ -9,14 +9,13 @@ import lombok.Setter;
 import java.util.Set;
 @Getter
 @Setter
-public class SignupRequest {
+public class RegisterRequest {
 
   @NotBlank
   @Size(max = 50)
   @Email
   private String email;
 
-  private String role;
   private String firstName;
   private String lastName;
   private String phoneNumber;
