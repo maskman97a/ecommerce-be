@@ -71,7 +71,7 @@ public class AccountService {
             account.setUpdatedAt(new Date());
             account.setPassword(passwordEncoder.encode(request.getPassword()));
         }else {
-            Role role = roleRepository.findByRoleName("USER").orElseThrow(() -> new BusinessException("NOT FOUND THIS ROLE"));
+            Role role = roleRepository.findRoleById(1L);
             account = Account.builder()
                     .email(request.getEmail())
                     .password(passwordEncoder.encode(request.getPassword()))
@@ -82,7 +82,7 @@ public class AccountService {
                     .build();
         }
         Account newAccount = accountRepository.save(account);
-        userService.createUser(request,newAccount);
+        User user = userService.createUser(request,newAccount);
         // Lưu token vào database
         TokenConfirm tokenConfirm = TokenConfirm.builder()
                 .token(UUID.randomUUID().toString())
@@ -95,8 +95,8 @@ public class AccountService {
 
         // Trả về path xác thực tài khoản
         // TODO: Link này gửi vào trong email
-        String link = "http://localhost:" + serverPort + "/verify-register?token=" +  tokenConfirm.getToken();;
-        mailService.sendVerificationEmail(account, link);
+        String link = "http://localhost:" + serverPort + "/api/v1/verify-account?token=" +  tokenConfirm.getToken();;
+        mailService.sendVerificationEmail(account, user, link);
         return "Registration successful, please check your email to verify your account.";
     }
     @Transactional

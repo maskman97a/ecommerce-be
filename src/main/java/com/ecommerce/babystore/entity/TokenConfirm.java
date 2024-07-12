@@ -38,7 +38,7 @@ public class TokenConfirm {
     LocalDateTime confirmedAt; // thời gian xác thực
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "account_id")
     Account account; // token này của user nào
 }
 
