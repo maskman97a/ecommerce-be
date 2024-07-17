@@ -3,6 +3,7 @@ package com.ecommerce.babystore.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Date;
 @Entity
 @Data
 @AllArgsConstructor
+@Builder
 @Table(name = "tbl_session")
 public class Session {
     @Id

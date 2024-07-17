@@ -7,10 +7,12 @@ import com.ecommerce.babystore.entity.*;
 import com.ecommerce.babystore.exception.BusinessException;
 import com.ecommerce.babystore.repository.AccountRepository;
 import com.ecommerce.babystore.repository.RoleRepository;
+import com.ecommerce.babystore.repository.SessionRepository;
 import com.ecommerce.babystore.repository.TokenConfirmRepository;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -36,27 +38,44 @@ public class AccountService {
     private final UserService userService;
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final SessionRepository sessionRepository;
 
     @Value("${server.port}")
     private int serverPort;
-//    public void login(LoginRequest request) {
-//        // Tạo đối tượng xác thực
-//        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-//                request.getEmail(),
-//                request.getPassword()
-//        );
-//        try {
-//            // Tiến hành xác thực
-//            Authentication authentication = authenticationManager.authenticate(token);
-//
-//            // Lưu đối tượng đã xác thực vào trong SecurityContextHolder
-//            SecurityContextHolder.getContext().setAuthentication(authentication);
-//        } catch (DisabledException e) {
-//            throw new RuntimeException("Tài khoản chưa được xác thực");
-//        } catch (AuthenticationException e) {
-//            throw new RuntimeException("Email hoặc mật khẩu không đúng");
-//        }
-//    }
+
+    @Value("${bezkoder.app.jwtExpirationMs}")
+    private int jwtExpirationMs;
+    public JwtResponse login(LoginRequest request) {
+        // Tạo đối tượng xác thực
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                request.getEmail(),
+                request.getPassword()
+        );
+        try {
+            // Tiến hành xác thực
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            String jwt = jwtUtils.generateJwtToken(authentication);
+            Session session = Session.builder()
+                    .account(accountRepository.findAccountByEmail(request.getEmail()))
+                    .expired(new Date((new Date()).getTime() + jwtExpirationMs))
+                    .loginTime(new Date())
+                    .token(jwt)
+                    .build();
+            sessionRepository.save(session);
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            return ResponseEntity.ok(new JwtResponse(jwt,
+                    userDetails.getFirstName(),
+                    userDetails.getLastName(),
+                    userDetails.getEmail(),
+                    userDetails.getAuthorities().toString())).getBody();
+        } catch (DisabledException e) {
+            throw new RuntimeException("Tài khoản chưa được xác thực");
+        } catch (AuthenticationException e) {
+            throw new RuntimeException("Email hoặc mật khẩu không đúng");
+        }
+    }
 
     @Transactional
     public String createAccount(RegisterRequest request) throws MessagingException, UnsupportedEncodingException {
