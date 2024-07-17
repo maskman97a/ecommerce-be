@@ -46,7 +46,7 @@ public class AccountService {
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
     private final SessionRepository sessionRepository;
-
+    private final AuthenticationManager authenticationManager;
     @Value("${server.port}")
     private int serverPort;
 
