@@ -3,12 +3,14 @@ package com.ecommerce.babystore.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
 
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @Table(name = "tbl_session")
 public class Session {
@@ -22,6 +24,8 @@ public class Session {
     @JsonManagedReference
     private Account account;
 
+    @Column(name = "token")
+    private String token;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "login_time")

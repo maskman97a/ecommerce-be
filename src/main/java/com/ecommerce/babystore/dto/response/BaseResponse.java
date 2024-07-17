@@ -1,9 +1,11 @@
 package com.ecommerce.babystore.dto.response;
 
 import com.ecommerce.babystore.common.ErrorType;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class BaseResponse {
     int errorCode;
     String message;
@@ -19,3 +21,5 @@ public class BaseResponse {
         this.message = message;
     }
 }
+
+

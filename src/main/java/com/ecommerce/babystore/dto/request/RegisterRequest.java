@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.util.Set;
 @Getter
 @Setter
-public class SignupRequest {
+public class RegisterRequest {
 
   @NotBlank
   @Size(max = 50)
