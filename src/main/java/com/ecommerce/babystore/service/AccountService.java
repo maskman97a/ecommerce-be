@@ -44,6 +44,7 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
     private final SessionRepository sessionRepository;
     private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
 
     @Value("${server.port}")
     private int serverPort;
