@@ -2,6 +2,7 @@ package com.ecommerce.babystore.service;
 
 import com.ecommerce.babystore.dto.request.LoginRequest;
 import com.ecommerce.babystore.dto.request.RegisterRequest;
+import com.ecommerce.babystore.dto.response.JwtResponse;
 import com.ecommerce.babystore.dto.response.VerifyAccountResponse;
 import com.ecommerce.babystore.entity.*;
 import com.ecommerce.babystore.exception.BusinessException;
@@ -9,9 +10,12 @@ import com.ecommerce.babystore.repository.AccountRepository;
 import com.ecommerce.babystore.repository.RoleRepository;
 import com.ecommerce.babystore.repository.SessionRepository;
 import com.ecommerce.babystore.repository.TokenConfirmRepository;
+import com.ecommerce.babystore.sercurity.jwt.JwtUtils;
+import com.ecommerce.babystore.sercurity.services.UserDetailsImpl;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,8 +42,6 @@ public class AccountService {
     private final UserService userService;
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-    private final SessionRepository sessionRepository;
 
     @Value("${server.port}")
     private int serverPort;
@@ -163,4 +165,7 @@ public class AccountService {
                 .message("Xác thực tài khoản thành công")
                 .build();
     }
+
+
+
 }

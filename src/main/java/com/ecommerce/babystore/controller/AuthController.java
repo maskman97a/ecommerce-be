@@ -1,6 +1,7 @@
 package com.ecommerce.babystore.controller;
 
 
+import com.ecommerce.babystore.dto.request.LoginRequest;
 import com.ecommerce.babystore.dto.request.RegisterRequest;
 import com.ecommerce.babystore.dto.response.BaseResponse;
 import com.ecommerce.babystore.dto.response.VerifyAccountResponse;
@@ -27,7 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+//@RequestMapping("/api/v1")
 public class AuthController {
     private final PasswordEncoder encoder;
     private final UserRepository userRepository;
@@ -38,12 +39,17 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<BaseResponse> registerAccount(@RequestBody RegisterRequest request) throws MessagingException, UnsupportedEncodingException {
         String mess =  accountService.createAccount(request);
-        return ResponseEntity.ok().body(new BaseResponse(200,"Successfully!",mess));
+        return ResponseEntity.ok().body(new BaseResponse(200,mess));
     }
 
     @GetMapping("/verify-account")
-    public ResponseEntity<BaseResponse> verifyAccount(@RequestParam String token){
+    public ResponseEntity<BaseResponse> verifyAccount(@RequestParam  String token){
         VerifyAccountResponse data = accountService.verifyAccount(token);
-        return ResponseEntity.ok().body(new BaseResponse(200,"Successfully!",data));
+        return ResponseEntity.ok().body(new BaseResponse(200,"Verify Successfully!",data));
+    }
+    @PostMapping("/login")
+    public ResponseEntity<BaseResponse> loginAccount(@RequestBody LoginRequest loginRequest)
+    {
+        return ResponseEntity.ok().body(new BaseResponse(200,"Login Successfully",accountService.login(loginRequest)));
     }
 }

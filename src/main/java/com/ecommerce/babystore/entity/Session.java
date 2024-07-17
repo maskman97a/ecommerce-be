@@ -10,6 +10,7 @@ import java.util.Date;
 
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @Builder
 @Table(name = "tbl_session")
@@ -24,6 +25,8 @@ public class Session {
     @JsonManagedReference
     private Account account;
 
+    @Column(name = "token")
+    private String token;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "login_time")
