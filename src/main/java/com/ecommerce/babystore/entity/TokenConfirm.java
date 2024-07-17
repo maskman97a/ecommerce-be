@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+//doi ten table
 @Table(name = "tbl_token_confirm")
 public class TokenConfirm {
     @Id
